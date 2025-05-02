@@ -37,7 +37,14 @@ RUN apt-get update && \
         python3-watchdog \
         python3-xlrd \
         python3-xlwt \
-        xz-utils && \
+        xz-utils \
+        libreoffice-base-core \
+        libreoffice-common \
+        libreoffice-core \
+        libreoffice-writer \
+        libreoffice-calc \
+        libreoffice-impress \
+	    unoconv && \
     if [ -z "${TARGETARCH}" ]; then \
         TARGETARCH="$(dpkg --print-architecture)"; \
     fi; \
@@ -82,6 +89,9 @@ RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/od
 # Copy entrypoint script and Odoo configuration file
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc/odoo/
+COPY ./override/scss/primary_variables.scss /usr/lib/python3/dist-packages/odoo/addons/web/static/src/scss/primary_variables.scss
+COPY ./override/html/database_manager.qweb.html /usr/lib/python3/dist-packages/odoo/addons/web/static/src/public/database_manager.qweb.html
+COPY ./override/img/* /usr/lib/python3/dist-packages/odoo/addons/web/static/img/
 
 # Set permissions and Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 RUN chown odoo /etc/odoo/odoo.conf \
